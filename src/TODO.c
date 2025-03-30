@@ -167,6 +167,8 @@ int main()
                 break;
             case 5:
                 running = false;
+                printf("Exiting...\n");
+                break;
             default:
                 printf("Invalid option\n");
                 break;
