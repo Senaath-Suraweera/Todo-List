@@ -103,9 +103,46 @@ int returnIndex(char todo[])
     return -1;
 }
 
+void serialize(Node *head){
+    FILE *file = fopen("resources/todo.txt", "w");
+    if (file == NULL) {
+        printf("Error opening file.\n");
+        return;
+    }
+
+    Node *temp = head;
+    while(temp != NULL){
+        fprintf(file, "%d. %s : %s\n", returnIndex(temp->ToDo.todo), temp->ToDo.todo, temp->ToDo.todoDescription);
+        temp = temp->next;
+    }
+    fclose(file);
+}
+
+void deserialize()
+{
+    FILE *fp;
+    fp = fopen("resources/todo.txt", "r");
+    if (fp == NULL)
+    {
+        printf("Error opening file\n");
+        return;
+    }
+
+    char todo[200];
+    char todoDescription[1000];
+    while(fgets(todo, sizeof(todo), fp) != NULL)
+    {
+        todo[strcspn(todo, "\n")] = 0;
+        fgets(todoDescription, sizeof(todoDescription), fp);
+        todoDescription[strcspn(todoDescription, "\n")] = 0;
+        addTodo(todo, todoDescription);
+    }
+    fclose(fp);
+}
 
 int main()
 {
+    deserialize();
     printf("=====================================================================\n");
     printf("Welcome to TODO List\n");
     printf("=====================================================================\n");
@@ -141,6 +178,7 @@ int main()
                 todoDescription[strcspn(todoDescription, "\n")] = 0;
 
                 addTodo(todo, todoDescription);
+                serialize(head);
                 break;
 
             case 2:
@@ -151,11 +189,13 @@ int main()
                 printf("Enter new todo description: ");
                 scanf("%s", todoDescription);
                 updateTodo(todo, todoDescription, initialTodo);
+                serialize(head);
                 break;
             case 3:
                 printf("Enter todo to be deleted: ");
                 scanf("%s", todo);
                 deleteTodo(todo);
+                serialize(head);
                 break;
             case 4:
                 temp = head;
